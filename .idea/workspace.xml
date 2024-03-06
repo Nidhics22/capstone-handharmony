@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="ad220887-f2df-4753-b36a-c8ceee9fb655" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/components/AppText.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/components/SignInButton.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/navigation/MainNavigation.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/navigation/RootNavigation.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/screens/MainScreen.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/screens/Signin.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/screens/config.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/App.js" beforeDir="false" afterPath="$PROJECT_DIR$/App.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectId" id="2dJ3I6VuSqroqVyHOeKbj63qtVm" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
+  <component name="ProjectViewState">
+    <option name="autoscrollFromSource" value="true" />
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showExcludedFiles" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="jdk.selected.JAVA_MODULE" value="11" />
+    <property name="project.structure.last.edited" value="Project" />
+    <property name="project.structure.proportion" value="0.0" />
+    <property name="project.structure.side.proportion" value="0.0" />
+    <property name="settings.editor.selected.configurable" value="configurable.group.editor" />
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="ad220887-f2df-4753-b36a-c8ceee9fb655" name="Default Changelist" comment="" />
+      <created>1709712270377</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1709712270377</updated>
+    </task>
+    <servers />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="0" y="98" key="new project wizard" timestamp="1709712730368">
+      <screen x="0" y="25" width="1680" height="943" />
+    </state>
+    <state x="0" y="98" key="new project wizard/0.25.1680.943@0.25.1680.943" timestamp="1709712730368" />
+  </component>
+</project>
