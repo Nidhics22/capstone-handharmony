@@ -2,17 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="ad220887-f2df-4753-b36a-c8ceee9fb655" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/components/AppText.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/components/SignInButton.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/navigation/MainNavigation.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/navigation/RootNavigation.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/screens/MainScreen.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/screens/Signin.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/screens/config.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/App.js" beforeDir="false" afterPath="$PROJECT_DIR$/App.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
