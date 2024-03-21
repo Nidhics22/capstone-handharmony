@@ -33,13 +33,16 @@ export default function Signin({ navigation }) {
         "user-read-playback-state",
         "streaming",
       ],
-
+      // In order to follow the "Authorization Code Flow" to fetch token after authorizationEndpoint
+      // this must be set to false
+      // exp://192.168.2.110:19000
+      // exp://192.168.2.112:19000
       usePKCE: false,
       show_dialog: true,
       // For usage in managed apps using the proxy
       redirectUri: makeRedirectUri({
         // For usage in bare and standalone
-        native: "http://localhost:4200/login",
+        native: "exp://192.168.0.13:8081",
       }),
     },
     discovery
@@ -71,11 +74,9 @@ export default function Signin({ navigation }) {
     })
       .then((response) => response.json())
       .then((data) => {
-      // Temporary storing token
-      // Need to change it to Redis Server
         if (data.access_token) {
           AsyncStorage.setItem("token", JSON.stringify(data.access_token));
-          console.log(data.access_token);
+//          console.log("ACCESS TOKEN: ",data.access_token);
           navigation.navigate("MainScreen");
         }
       });

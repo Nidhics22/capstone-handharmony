@@ -59,6 +59,14 @@ export default class CameraScreen extends React.Component {
       const headers = {
         Authorization: "Bearer " + token,
       };
+
+      // const resp = await fetch("https://api.spotify.com/v1/me/player", {
+      //   method: "GET",
+      //   headers: headers,
+      // })
+      // const data = await resp.json()
+      // this.setState({ playing: data.is_playing });
+
       await tf.ready();
       const { status } = Camera.getCameraPermissionsAsync();
       let textureDims = { height: 1200, width: 1600 };
@@ -69,6 +77,8 @@ export default class CameraScreen extends React.Component {
       const tensorDims = { height: 500, width: 292 };
 
       const scale = {
+        //height: styles.camera.height / tensorDims.height,
+        //width: styles.camera.width / tensorDims.width,
         height: 1,
         width: 1,
       };
@@ -87,6 +97,114 @@ export default class CameraScreen extends React.Component {
     }
   }
 
+   async handleImageTensorReady(images,updatePreview) {
+       const loop = async () => {
+         try {
+         //if (this.state.handDetector != null) {
+          if (this.frameCount % this.makePredictionEveryNFrames === 0) {
+           const imageTensor = images.next().value;
+           console.log(imageTensor);
+           const returnTensors = false;
+           if (imageTensor) {
+           const hands = await this.state.handDetector.estimateHands(
+             imageTensor,
+             returnTensors
+           );
+           tf.dispose(imageTensor);
+           this.setState({ hands });
+           }
+        // }
+            //this.frameCount += 1;
+       // frameCount += 1;
+       //  console.log(frameCount);
+       //this.frameCount = this.frameCount % this.makePredictionsEveryNFrames;
+       //frameCount = frameCount % makePredictionEveryNFrames;
+       this.rafID = requestAnimationFrame(loop);
+         // }
+
+       // if (!AUTORENDER) {
+       //   updatePreview();
+       //   // gl.endFrameEXP();
+       // }
+     }
+
+     } catch(e) {
+        console.log(e)
+      }
+
+     }
+     loop();
+   }
+
+  async handleImageTensorReady(images) {
+    const loop = async () => {
+      if (this.state.handDetector != null) {
+        if (frameCount % makePredictionEveryNFrames === 0) {
+          const imageTensor = images.next().value;
+          const returnTensors = false;
+          const hands = await this.state.handDetector.estimateHands(
+            imageTensor,
+            returnTensors
+          );
+          tf.dispose(imageTensor);
+          this.setState({ hands });
+          console.log(
+            "5",
+            hands.map((hand) => hand.landmarks[5][1])
+          );
+          console.log(
+            "8",
+            hands.map((hand) => hand.landmarks[8][1])
+          );
+          console.log(
+            "9",
+            hands.map((hand) => hand.landmarks[9][1])
+          );
+          console.log(
+            "12",
+            hands.map((hand) => hand.landmarks[12][1])
+          );
+          console.log(
+            "13",
+            hands.map((hand) => hand.landmarks[13][1])
+          );
+          console.log(
+            "16",
+            hands.map((hand) => hand.landmarks[16][1])
+          );
+          console.log(
+            "17",
+            hands.map((hand) => hand.landmarks[17][1])
+          );
+          console.log(
+            "20",
+            hands.map((hand) => hand.landmarks[20][1])
+          );
+          // for(let i = 0; i < hands.length; i++){
+          //   const keypoints = hands[i].landmarks;
+
+          //   //Log key handpoints
+          //   for(let i = 0;i < keypoints.length; i++){
+          //     const [x, y, z] = keypoints[i];
+          //     console.log("Keypoint ",x,y,z)
+          //   }
+          // }
+        }
+      }
+      frameCount = frameCount + 1;
+      frameCount = frameCount % makePredictionEveryNFrames;
+      requestAnimationFrameID = requestAnimationFrame(loop);
+    };
+
+    loop();
+  }
+
+  componentWillUnmount() {
+    if (requestAnimationFrameID) {
+      cancelAnimationFrame(requestAnimationFrameID);
+    }
+  }
+
   renderInitialization() {
     return (
       <View style={styles.container}>
@@ -94,12 +212,15 @@ export default class CameraScreen extends React.Component {
         <Text>tf.version {tf.version_core}</Text>
         <Text>tf.backend {tf.getBackend()}</Text>
       </View>
+      // <LottieAnimation />
     );
   }
 
   renderHandsDebugInfo() {
     try {
       const { hands, scale, textureDims } = this.state;
+      //  console.log({hands});
+
       return hands.map((hand, i) => {
         // const {topLeft, bottomRight, probability} = hand;
         // Render landmarks
@@ -147,12 +268,39 @@ export default class CameraScreen extends React.Component {
               this.setState({ isFree1: true });
             }, 2000);
           }
-        }
-//        else if () {
-//          console.log("Skip song");
-//
-//        }
-         else {
+        } else if (
+          hand.landmarks[5][1] > hand.landmarks[8][1] &&
+          hand.landmarks[9][1] < hand.landmarks[12][1] &&
+          hand.landmarks[13][1] < hand.landmarks[16][1] &&
+          hand.landmarks[17][1] > hand.landmarks[20][1]
+        ) {
+          console.log("Skip song");
+
+          if (this.state.isFree) {
+            this.setState({ isFree: false });
+
+            if (this.state.playing == false) {
+              this.setState({ playing: true });
+            }
+            fetch("https://api.spotify.com/v1/me/player/next", {
+              method: "POST",
+              headers: {
+                Authorization: "Bearer " + this.state.token,
+              },
+            })
+              .then((response) => response.json())
+              .then((data) => console.log(data))
+              .catch((error) => console.log(error.message));
+
+            if (this.state.gesture != "Skip song") {
+              this.setState({ gesture: "Skip song" });
+            }
+
+            setTimeout(() => {
+              this.setState({ isFree: true });
+            }, 2000);
+          }
+        } else {
           if (this.state.gesture != "Nothing detected") {
             this.setState({ gesture: "Nothing detected" });
           }
@@ -164,8 +312,216 @@ export default class CameraScreen extends React.Component {
     }
   }
 
+  //   return (
+  //     <>
+  //       <Svg
+  //         key={i}
+  //         height={previewHeight}
+  //         width={previewWidth}
+  //         viewBox={`0 0 290 500`}
+  //         style={{ position: "absolute", top: 200, left: 0, opacity: 0.9 }}
+  //       >
+  //         <Circle
+  //           cx={hand.landmarks[0][0] * rate}
+  //           cy={hand.landmarks[0][1] * rate}
+  //           r="2"
+  //           stroke="red"
+  //           strokeWidth="2.5"
+  //           fill="red"
+  //         />
+  //         <Circle
+  //           cx={hand.landmarks[1][0] * rate}
+  //           cy={hand.landmarks[1][1] * rate}
+  //           r="2"
+  //           stroke="red"
+  //           strokeWidth="2.5"
+  //           fill="red"
+  //         />
+  //         <Circle
+  //           cx={hand.landmarks[2][0] * rate}
+  //           cy={hand.landmarks[2][1] * rate}
+  //           r="2"
+  //           stroke="red"
+  //           strokeWidth="2.5"
+  //           fill="red"
+  //         />
+  //         <Circle
+  //           cx={hand.landmarks[3][0] * rate}
+  //           cy={hand.landmarks[3][1] * rate}
+  //           r="2"
+  //           stroke="red"
+  //           strokeWidth="2.5"
+  //           fill="red"
+  //         />
+  //         <Circle
+  //           cx={hand.landmarks[4][0] * rate}
+  //           cy={hand.landmarks[4][1] * rate}
+  //           r="2"
+  //           stroke="red"
+  //           strokeWidth="2.5"
+  //           fill="red"
+  //         />
+  //         <Circle
+  //           cx={hand.landmarks[5][0] * rate}
+  //           cy={hand.landmarks[5][1] * rate}
+  //           r="2"
+  //           stroke="yellow"
+  //           strokeWidth="2.5"
+  //           fill="red"
+  //         />
+  //         <Circle
+  //           cx={hand.landmarks[6][0] * rate}
+  //           cy={hand.landmarks[6][1] * rate}
+  //           r="2"
+  //           stroke="blue"
+  //           strokeWidth="2.5"
+  //           fill="red"
+  //         />
+  //         <Circle
+  //           cx={hand.landmarks[7][0] * rate}
+  //           cy={hand.landmarks[7][1] * rate}
+  //           r="2"
+  //           stroke="red"
+  //           strokeWidth="2.5"
+  //           fill="red"
+  //         />
+  //         <Circle
+  //           cx={hand.landmarks[8][0] * rate}
+  //           cy={hand.landmarks[8][1] * rate}
+  //           r="2"
+  //           stroke="green"
+  //           strokeWidth="2.5"
+  //           fill="red"
+  //         />
+  //         <Circle
+  //           cx={hand.landmarks[9][0] * rate}
+  //           cy={hand.landmarks[9][1] * rate}
+  //           r="2"
+  //           stroke="yellow"
+  //           strokeWidth="2.5"
+  //           fill="red"
+  //         />
+  //         <Circle
+  //           cx={hand.landmarks[10][0] * rate}
+  //           cy={hand.landmarks[10][1] * rate}
+  //           r="2"
+  //           stroke="blue"
+  //           strokeWidth="2.5"
+  //           fill="red"
+  //         />
+  //         <Circle
+  //           cx={hand.landmarks[11][0] * rate}
+  //           cy={hand.landmarks[11][1] * rate}
+  //           r="2"
+  //           stroke="red"
+  //           strokeWidth="2.5"
+  //           fill="red"
+  //         />
+  //         <Circle
+  //           cx={hand.landmarks[12][0] * rate}
+  //           cy={hand.landmarks[12][1] * rate}
+  //           r="2"
+  //           stroke="green"
+  //           strokeWidth="2.5"
+  //           fill="red"
+  //         />
+  //         <Circle
+  //           cx={hand.landmarks[13][0] * rate}
+  //           cy={hand.landmarks[13][1] * rate}
+  //           r="2"
+  //           stroke="yellow"
+  //           strokeWidth="2.5"
+  //           fill="red"
+  //         />
+  //         <Circle
+  //           cx={hand.landmarks[14][0] * rate}
+  //           cy={hand.landmarks[14][1] * rate}
+  //           r="2"
+  //           stroke="blue"
+  //           strokeWidth="2.5"
+  //           fill="red"
+  //         />
+  //         <Circle
+  //           cx={hand.landmarks[15][0] * rate}
+  //           cy={hand.landmarks[15][1] * rate}
+  //           r="2"
+  //           stroke="red"
+  //           strokeWidth="2.5"
+  //           fill="red"
+  //         />
+  //         <Circle
+  //           cx={hand.landmarks[16][0] * rate}
+  //           cy={hand.landmarks[16][1] * rate}
+  //           r="2"
+  //           stroke="green"
+  //           strokeWidth="2.5"
+  //           fill="red"
+  //         />
+  //         <Circle
+  //           cx={hand.landmarks[17][0] * rate}
+  //           cy={hand.landmarks[17][1] * rate}
+  //           r="2"
+  //           stroke="yellow"
+  //           strokeWidth="2.5"
+  //           fill="red"
+  //         />
+  //         <Circle
+  //           cx={hand.landmarks[18][0] * rate}
+  //           cy={hand.landmarks[18][1] * rate}
+  //           r="2"
+  //           stroke="blue"
+  //           strokeWidth="2.5"
+  //           fill="red"
+  //         />
+  //         <Circle
+  //           cx={hand.landmarks[19][0] * rate}
+  //           cy={hand.landmarks[19][1] * rate}
+  //           r="2"
+  //           stroke="red"
+  //           strokeWidth="2.5"
+  //           fill="red"
+  //         />
+  //         <Circle
+  //           cx={hand.landmarks[20][0] * rate}
+  //           cy={hand.landmarks[20][1] * rate}
+  //           r="2"
+  //           stroke="green"
+  //           strokeWidth="2.5"
+  //           fill="red"
+  //         />
+  //       </Svg>
+  //       {/* <Text style={styles.textContainer} key={`faceInfo${i}`}>
+  //     Probability: {hand.handInViewConfidence}
+  //   </Text> */}
+  //     </>
+  //   );
+  // });
+  // } catch {
+  //   console.log("error");
+  // }
+  //}
+
   renderMain() {
     const { textureDims, hands, tensorDims } = this.state;
+
+    // return (
+    //   <View style={styles.cameraContainer}>
+    //     <TensorCamera
+    //       // Standard Camera props
+    //       style={styles.camera}
+    //       type={this.state.cameraType}
+    //       zoom={0}
+    //       // tensor related props
+    //       cameraTextureHeight={textureDims.height}
+    //       cameraTextureWidth={textureDims.width}
+    //       resizeHeight={tensorDims.height}
+    //       resizeWidth={tensorDims.width}
+    //       resizeDepth={3}
+    //       onReady={this.handleImageTensorReady}
+    //       autorender={AUTORENDER}
+    //     />
+    //   </View>
+    // );
 
     return (
       <View style={styles.container}>
@@ -189,7 +545,6 @@ export default class CameraScreen extends React.Component {
             }}
           />
         </View>
-
         <View style={styles.cameraContainer}>
           {this.state.showCamera === true ? (
             <TensorCamera
@@ -239,7 +594,6 @@ export default class CameraScreen extends React.Component {
             }}
           />
         </View>
-
         <View style={styles.spaceContainer}></View>
         <View style={styles.gestureContainer}>
           <Text style={{ color: "#39B3BB", fontSize: 18 }}>
@@ -247,6 +601,29 @@ export default class CameraScreen extends React.Component {
           </Text>
           <Text style={{ fontSize: 24 }}>{this.state.gesture}</Text>
         </View>
+        <View style={styles.controlsContainer}>
+          <Text style={{ color: "#39B3BB", fontSize: 18 }}>
+            Manual Controls
+          </Text>
+          <View style={{ flexDirection: "row", alignItems: "center" }}>
+            <MaterialCommunityIcons
+              name="skip-previous"
+              onPress={() => {
+                this.setState({ playing: true });
+                fetch("https://api.spotify.com/v1/me/player/previous", {
+                  method: "POST",
+                  headers: {
+                    Authorization: "Bearer " + this.state.token,
+                  },
+                })
+                  .then((response) => response.json())
+                  .then((data) => console.log(data))
+                  .catch((error) => console.log(error.message));
+              }}
+              size={45}
+              color="black"
+              style={{ paddingHorizontal: 10 }}
+            />
             {!this.state.playing && (
               <MaterialCommunityIcons
                 name="play"
@@ -288,12 +665,64 @@ export default class CameraScreen extends React.Component {
                 style={{ paddingHorizontal: 10 }}
               />
             )}
+
+            <MaterialCommunityIcons
+              name="skip-next"
+              onPress={() => {
+                this.setState({ playing: true });
+                fetch("https://api.spotify.com/v1/me/player/next", {
+                  method: "POST",
+                  headers: {
+                    Authorization: "Bearer " + this.state.token,
+                  },
+                })
+                  .then((response) => response.json())
+                  .then((data) => console.log(data))
+                  .catch((error) => console.log(error.message));
+              }}
+              size={45}
+              color="black"
+              style={{ paddingHorizontal: 10 }}
+            />
           </View>
         </View>
 
+        {/* <Text style={styles.textContainer}>tf.backend {tf.getBackend()}</Text> */}
+        {/* <View style={styles.infoContainer}>
+          <Text style={styles.titleText}>Detected Gesture: {this.state.gesture}</Text>
+        </View> */}
+        {/* <Text style={styles.textContainer}># hands detected: {hands.length}</Text> */}
+        {/* {this.renderBoundingBoxes()} */}
         {this.renderHandsDebugInfo()}
       </View>
     );
+  }
+
+  renderBoundingBoxes() {
+    const { hands, scale } = this.state;
+    // On android the bounding boxes need to be mirrored horizontally
+    const flipHorizontal = Platform.OS === "ios" ? false : true;
+    return hands.map((hand, i) => {
+      const { topLeft, bottomRight } = face;
+      const bbLeft = topLeft[0] * scale.width;
+      const boxStyle = Object.assign({}, styles.bbox, {
+        left: flipHorizontal
+          ? previewWidth - bbLeft - previewLeft
+          : bbLeft + previewLeft,
+        top: topLeft[1] * scale.height + 20,
+        width: (bottomRight[0] - topLeft[0]) * scale.width,
+        height: (bottomRight[1] - topLeft[1]) * scale.height,
+      });
+
+      return <View style={boxStyle} key={`face${i}`}></View>;
+      1;
+    });
+  }
+
+  render() {
+    const { isTfReady } = this.state;
+
+    return isTfReady ? this.renderMain() : this.renderInitialization();
   }
 }
 
